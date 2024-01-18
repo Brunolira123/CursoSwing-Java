@@ -4,11 +4,17 @@
  */
 package view;
 
+import controller.ControllerUsuario;
+import model.ModelUsuario;
+
 /**
  *
  * @author Bruno
  */
 public class ViewUsuario extends javax.swing.JFrame {
+
+    ModelUsuario usuario = new ModelUsuario();
+    ControllerUsuario controller = new ControllerUsuario();
 
     /**
      * Creates new form ViewUsuario
@@ -46,6 +52,8 @@ public class ViewUsuario extends javax.swing.JFrame {
 
         jLabel1.setText("Codigo:");
 
+        txtCod.setEditable(false);
+
         jLabel2.setText("Nome:");
 
         jLabel3.setText("Login");
@@ -79,6 +87,11 @@ public class ViewUsuario extends javax.swing.JFrame {
         }
 
         btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
 
         jButton2.setText("Limpar");
 
@@ -166,6 +179,17 @@ public class ViewUsuario extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+
+        usuario = new ModelUsuario();
+
+        usuario.setUsuNome(txtNome.getText());
+        usuario.setUsuLogin(txtLogin.getText());
+        usuario.setUsuSenha(String.valueOf(txtSenha.getPassword()));
+
+        controller.salvarUsuarioController(usuario);
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
      * @param args the command line arguments
