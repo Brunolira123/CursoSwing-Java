@@ -5,6 +5,10 @@
 package view;
 
 import controller.ControllerUsuario;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 import model.ModelUsuario;
 
 /**
@@ -15,13 +19,17 @@ public class ViewUsuario extends javax.swing.JFrame {
 
     ModelUsuario usuario = new ModelUsuario();
     ControllerUsuario controller = new ControllerUsuario();
+    List<ModelUsuario> listaUsuario = new ArrayList<>();
 
     /**
      * Creates new form ViewUsuario
      */
     public ViewUsuario() {
         initComponents();
+        this.setLocationRelativeTo(null);
+        carregarUsuarios();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -42,7 +50,7 @@ public class ViewUsuario extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         txtSenha = new javax.swing.JPasswordField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jtUsuario = new javax.swing.JTable();
         btnSalvar = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
@@ -60,7 +68,7 @@ public class ViewUsuario extends javax.swing.JFrame {
 
         jLabel4.setText("Senha");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jtUsuario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -79,11 +87,11 @@ public class ViewUsuario extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setMinWidth(100);
-            jTable1.getColumnModel().getColumn(0).setPreferredWidth(100);
-            jTable1.getColumnModel().getColumn(0).setMaxWidth(100);
+        jScrollPane1.setViewportView(jtUsuario);
+        if (jtUsuario.getColumnModel().getColumnCount() > 0) {
+            jtUsuario.getColumnModel().getColumn(0).setMinWidth(100);
+            jtUsuario.getColumnModel().getColumn(0).setPreferredWidth(100);
+            jtUsuario.getColumnModel().getColumn(0).setMaxWidth(100);
         }
 
         btnSalvar.setText("Salvar");
@@ -137,7 +145,7 @@ public class ViewUsuario extends javax.swing.JFrame {
                                 .addComponent(jLabel4)
                                 .addGap(153, 153, 153))
                             .addComponent(txtSenha))))
-                .addGap(19, 19, 19))
+                .addGap(13, 13, 13))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -170,7 +178,9 @@ public class ViewUsuario extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -184,13 +194,44 @@ public class ViewUsuario extends javax.swing.JFrame {
 
         usuario = new ModelUsuario();
 
-        usuario.setUsuNome(txtNome.getText());
-        usuario.setUsuLogin(txtLogin.getText());
+        usuario.setUsuNome(txtNome.getText().toUpperCase());
+        usuario.setUsuLogin(txtLogin.getText().toUpperCase());
         usuario.setUsuSenha(String.valueOf(txtSenha.getPassword()));
-
-        controller.salvarUsuarioController(usuario);
+        if(controller.salvarUsuarioController(usuario)){
+            JOptionPane.showMessageDialog(this,"Usuario cadastrado com sucesso!","Atenção",JOptionPane.INFORMATION_MESSAGE);
+            //limpar
+            limparFormulario();
+            carregarUsuarios();
+        }else{
+            JOptionPane.showMessageDialog(this,"Erro ao cadastrar usuario","Erro" ,JOptionPane.ERROR_MESSAGE);
+        } 
     }//GEN-LAST:event_btnSalvarActionPerformed
 
+    /**
+     * limpa formulario de usuario
+     */
+    private void limparFormulario(){
+        txtNome.setText("");
+        txtLogin.setText("");
+        txtSenha.setText("");
+    }
+    
+    /**
+     * Carrega uma lista de usuarios na tabela
+     */
+    private void carregarUsuarios(){
+        listaUsuario = controller.getListaUsuariosController();
+        DefaultTableModel modelo = (DefaultTableModel) jtUsuario.getModel();
+        modelo.setNumRows(0);
+        
+        for (int i = 0; i < listaUsuario.size(); i++) {
+            modelo.addRow(new Object[]{
+                listaUsuario.get(i).getId(),
+                listaUsuario.get(i).getUsuNome(),
+                listaUsuario.get(i).getUsuLogin()
+            });
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -237,7 +278,7 @@ public class ViewUsuario extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable jtUsuario;
     private javax.swing.JTextField txtCod;
     private javax.swing.JTextField txtLogin;
     private javax.swing.JTextField txtNome;

@@ -10,8 +10,11 @@ public class ConexaoPostgreSQL {
     public boolean conectar() {
         try {
             String url = "jdbc:postgresql://localhost:5432/estoque";
+            String usuario = "postgres";
+            String senha = "Brunolira1";
 
-            this.conn = DriverManager.getConnection(url);
+            this.conn = DriverManager.getConnection(url,usuario,senha);
+            System.out.println("Conectado");
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return false;
@@ -24,6 +27,7 @@ public class ConexaoPostgreSQL {
             if (this.conn.isClosed() == false) {
                 this.conn.close();
             }
+             System.out.println("Desconectado");
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return false;
@@ -43,6 +47,7 @@ public class ConexaoPostgreSQL {
 
     public PreparedStatement criarPreparedStatement(String sql, int RETURN_GENERATED_KEYS) {
         try {
+             System.out.println("Executando");
             return conn.prepareStatement(sql, RETURN_GENERATED_KEYS);
         } catch (SQLException e) {
             e.printStackTrace();
