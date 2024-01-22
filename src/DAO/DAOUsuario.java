@@ -5,6 +5,8 @@ import util.ConexaoPostgreSQL;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -76,5 +78,67 @@ public class DAOUsuario extends ConexaoPostgreSQL {
 
         desconectar();
         return list;
+    }
+
+    /**
+     * exclui usuario pelo código, exclui direto no banco! sem exclusão lógica
+     *
+     * @param codigoUsuario
+     * @return
+     */
+    public boolean excluirUsuarioDAO(int codigoUsuario) {
+        conectar();
+        PreparedStatement ps;
+        String sql = "DELETE FROM tbl_usuario WHERE pk_usu_id = '" + codigoUsuario + "'";
+        ps = this.criarPreparedStatement(sql);
+
+        try {
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            e.getMessage();
+            return false;
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        this.desconectar();
+        return true;
+    }
+
+    public ModelUsuario getUsuario(int codigoUsuario) {
+        ModelUsuario usuario = new ModelUsuario();
+        conectar();
+        ResultSet rs = null;
+        PreparedStatement ps = null;
+
+        String sql
+                = "SELECT "
+                + "pk_usu_id, "
+                + "usu_nome ,"
+                + "usu_login, "
+                + "usu_senha "
+                + "FROM tbl_usuario "
+                + "WHERE pk_usu_id = '" + codigoUsuario + "'";
+        ps = criarPreparedStatement(sql);
+        try {
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                usuario = new ModelUsuario();
+                usuario.setId(rs.getInt("pk_usu_id"));
+                usuario.setUsuNome(rs.getString("usu_nome"));
+                usuario.setUsuLogin(rs.getString("usu_login"));
+                usuario.setUsuSenha(rs.getString("usu_senha"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOUsuario.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        desconectar();
+        return usuario;
     }
 }

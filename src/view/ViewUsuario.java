@@ -29,7 +29,6 @@ public class ViewUsuario extends javax.swing.JFrame {
         this.setLocationRelativeTo(null);
         carregarUsuarios();
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,8 +52,8 @@ public class ViewUsuario extends javax.swing.JFrame {
         jtUsuario = new javax.swing.JTable();
         btnSalvar = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
+        btnAlterar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -102,10 +101,25 @@ public class ViewUsuario extends javax.swing.JFrame {
         });
 
         jButton2.setText("Limpar");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
-        jButton3.setText("Excluir");
+        btnExcluir.setText("Excluir");
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
 
-        jButton4.setText("Alterar");
+        btnAlterar.setText("Alterar");
+        btnAlterar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -120,9 +134,9 @@ public class ViewUsuario extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jButton2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton3)
+                                .addComponent(btnExcluir)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jButton4))
+                                .addComponent(btnAlterar))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 829, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -169,8 +183,8 @@ public class ViewUsuario extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
-                    .addComponent(jButton3)
-                    .addComponent(jButton4))
+                    .addComponent(btnExcluir)
+                    .addComponent(btnAlterar))
                 .addGap(18, 18, 18))
         );
 
@@ -197,33 +211,70 @@ public class ViewUsuario extends javax.swing.JFrame {
         usuario.setUsuNome(txtNome.getText().toUpperCase());
         usuario.setUsuLogin(txtLogin.getText().toUpperCase());
         usuario.setUsuSenha(String.valueOf(txtSenha.getPassword()));
-        if(controller.salvarUsuarioController(usuario)){
-            JOptionPane.showMessageDialog(this,"Usuario cadastrado com sucesso!","Atenção",JOptionPane.INFORMATION_MESSAGE);
+        if (controller.salvarUsuarioController(usuario)) {
+            JOptionPane.showMessageDialog(this, "Usuario cadastrado com sucesso!", "Atenção", JOptionPane.INFORMATION_MESSAGE);
             //limpar
             limparFormulario();
             carregarUsuarios();
-        }else{
-            JOptionPane.showMessageDialog(this,"Erro ao cadastrar usuario","Erro" ,JOptionPane.ERROR_MESSAGE);
-        } 
+        } else {
+            JOptionPane.showMessageDialog(this, "Erro ao cadastrar usuario", "Erro", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        limparFormulario();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        // TODO add your handling code here:
+        int linha = jtUsuario.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Nenhum usuário selecionado!");
+        } else {
+            int codigo = (int) jtUsuario.getValueAt(linha, 0);
+            if (controller.excluirUsuarioController(codigo)) {
+                carregarUsuarios();
+                limparFormulario();
+                JOptionPane.showMessageDialog(this, "Usuario excluído com sucesso!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Erro ao excluir usuário!");
+            }
+        }
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
+        usuario = new ModelUsuario();
+        int linha = jtUsuario.getSelectedRow();
+        if (linha < 0) {
+            JOptionPane.showMessageDialog(this, "Nenhum usuário selecionado!");
+        } else {
+            int codigo = (int) jtUsuario.getValueAt(linha, 0);
+            usuario = controller.getUsuarioController(codigo);
+            txtCod.setText(String.valueOf(usuario.getId()));
+            txtNome.setText(usuario.getUsuNome());
+            txtNome.setText(usuario.getUsuNome());
+            txtSenha.setText(usuario.getUsuSenha());
+        }
+
+    }//GEN-LAST:event_btnAlterarActionPerformed
 
     /**
      * limpa formulario de usuario
      */
-    private void limparFormulario(){
+    private void limparFormulario() {
         txtNome.setText("");
         txtLogin.setText("");
         txtSenha.setText("");
     }
-    
+
     /**
      * Carrega uma lista de usuarios na tabela
      */
-    private void carregarUsuarios(){
+    private void carregarUsuarios() {
         listaUsuario = controller.getListaUsuariosController();
         DefaultTableModel modelo = (DefaultTableModel) jtUsuario.getModel();
         modelo.setNumRows(0);
-        
+
         for (int i = 0; i < listaUsuario.size(); i++) {
             modelo.addRow(new Object[]{
                 listaUsuario.get(i).getId(),
@@ -232,6 +283,7 @@ public class ViewUsuario extends javax.swing.JFrame {
             });
         }
     }
+
     /**
      * @param args the command line arguments
      */
@@ -268,10 +320,10 @@ public class ViewUsuario extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlterar;
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
